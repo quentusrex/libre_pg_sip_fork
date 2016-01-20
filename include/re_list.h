@@ -35,7 +35,7 @@ struct list {
  *
  * @return true to stop traversing, false to continue
  */
-typedef bool (list_apply_h)(struct le *le, void *arg);
+typedef bool (re_list_apply_h)(struct le *le, void *arg);
 
 /**
  * Defines the list sort handler
@@ -46,25 +46,25 @@ typedef bool (list_apply_h)(struct le *le, void *arg);
  *
  * @return true if sorted, otherwise false
  */
-typedef bool (list_sort_h)(struct le *le1, struct le *le2, void *arg);
+typedef bool (re_list_sort_h)(struct le *le1, struct le *le2, void *arg);
 
 
-void list_init(struct list *list);
-void list_flush(struct list *list);
-void list_clear(struct list *list);
-void list_append(struct list *list, struct le *le, void *data);
-void list_prepend(struct list *list, struct le *le, void *data);
-void list_insert_before(struct list *list, struct le *le, struct le *ile,
+void re_list_init(struct list *list);
+void re_list_flush(struct list *list);
+void re_list_clear(struct list *list);
+void re_list_append(struct list *list, struct le *le, void *data);
+void re_list_prepend(struct list *list, struct le *le, void *data);
+void re_list_insert_before(struct list *list, struct le *le, struct le *ile,
 			void *data);
-void list_insert_after(struct list *list, struct le *le, struct le *ile,
+void re_list_insert_after(struct list *list, struct le *le, struct le *ile,
 		       void *data);
-void list_unlink(struct le *le);
-void list_sort(struct list *list, list_sort_h *sh, void *arg);
-struct le *list_apply(const struct list *list, bool fwd, list_apply_h *ah,
+void re_list_unlink(struct le *le);
+void re_list_sort(struct list *list, re_list_sort_h *sh, void *arg);
+struct le *re_list_apply(const struct list *list, bool fwd, re_list_apply_h *ah,
 		      void *arg);
-struct le *list_head(const struct list *list);
-struct le *list_tail(const struct list *list);
-uint32_t list_count(const struct list *list);
+struct le *re_list_head(const struct list *list);
+struct le *re_list_tail(const struct list *list);
+uint32_t re_list_count(const struct list *list);
 
 
 /**
@@ -74,23 +74,23 @@ uint32_t list_count(const struct list *list);
  *
  * @return Pointer to user-data
  */
-static inline void *list_ledata(const struct le *le)
+static inline void *re_list_ledata(const struct le *le)
 {
 	return le ? le->data : NULL;
 }
 
 
-static inline bool list_contains(const struct list *list, const struct le *le)
+static inline bool re_list_contains(const struct list *list, const struct le *le)
 {
 	return le ? le->list == list : false;
 }
 
 
-static inline bool list_isempty(const struct list *list)
+static inline bool re_list_isempty(const struct list *list)
 {
 	return list ? list->head == NULL : true;
 }
 
 
 #define LIST_FOREACH(list, le)					\
-	for ((le) = list_head((list)); (le); (le) = (le)->next)
+	for ((le) = re_list_head((list)); (le); (le) = (le)->next)

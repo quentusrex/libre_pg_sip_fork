@@ -25,7 +25,7 @@ static void destructor(void *arg)
 {
 	struct sdp_attr *attr = arg;
 
-	list_unlink(&attr->le);
+	re_list_unlink(&attr->le);
 	mem_deref(attr->name);
 	mem_deref(attr->val);
 }
@@ -40,7 +40,7 @@ int sdp_attr_add(struct list *lst, struct pl *name, struct pl *val)
 	if (!attr)
 		return ENOMEM;
 
-	list_append(lst, &attr->le, attr);
+	re_list_append(lst, &attr->le, attr);
 
 	err = pl_strdup(&attr->name, name);
 
@@ -64,7 +64,7 @@ int sdp_attr_addv(struct list *lst, const char *name, const char *val,
 	if (!attr)
 		return ENOMEM;
 
-	list_append(lst, &attr->le, attr);
+	re_list_append(lst, &attr->le, attr);
 
 	err = str_dup(&attr->name, name);
 
@@ -80,7 +80,7 @@ int sdp_attr_addv(struct list *lst, const char *name, const char *val,
 
 void sdp_attr_del(const struct list *lst, const char *name)
 {
-	struct le *le = list_head(lst);
+	struct le *le = re_list_head(lst);
 
 	while (le) {
 
@@ -97,7 +97,7 @@ void sdp_attr_del(const struct list *lst, const char *name)
 const char *sdp_attr_apply(const struct list *lst, const char *name,
 			   sdp_attr_h *attrh, void *arg)
 {
-	struct le *le = list_head(lst);
+	struct le *le = re_list_head(lst);
 
 	while (le) {
 

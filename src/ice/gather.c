@@ -196,7 +196,7 @@ static int start_gathering(struct icem *icem, const struct sa *stun_srv,
 	if (icem->ice->lmode != ICE_MODE_FULL)
 		return EINVAL;
 
-	if (list_isempty(&icem->compl)) {
+	if (re_list_isempty(&icem->compl)) {
 		DEBUG_WARNING("gathering: no components for"
 			      " mediastream '%s'\n", icem->name);
 		return ENOENT;

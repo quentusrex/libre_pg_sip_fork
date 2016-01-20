@@ -170,7 +170,7 @@ static bool ack_handler(struct sip *sip, const struct sip_msg *msg)
 {
 	struct sip_strans *st;
 
-	st = list_ledata(hash_lookup(sip->ht_strans,
+	st = re_list_ledata(hash_lookup(sip->ht_strans,
 				     hash_joaat_pl(&msg->via.branch),
 				     cmp_ack_handler, (void *)msg));
 	if (!st)
@@ -205,7 +205,7 @@ static bool cancel_handler(struct sip *sip, const struct sip_msg *msg)
 {
 	struct sip_strans *st;
 
-	st = list_ledata(hash_lookup(sip->ht_strans,
+	st = re_list_ledata(hash_lookup(sip->ht_strans,
 				     hash_joaat_pl(&msg->via.branch),
 				     cmp_cancel_handler, (void *)msg));
 	if (!st)
@@ -238,7 +238,7 @@ static bool request_handler(const struct sip_msg *msg, void *arg)
 	if (!pl_strcmp(&msg->met, "ACK"))
 		return ack_handler(sip, msg);
 
-	st = list_ledata(hash_lookup(sip->ht_strans,
+	st = re_list_ledata(hash_lookup(sip->ht_strans,
 				     hash_joaat_pl(&msg->via.branch),
 				     cmp_handler, (void *)msg));
 	if (st) {
@@ -258,7 +258,7 @@ static bool request_handler(const struct sip_msg *msg, void *arg)
 	}
 	else if (!pl_isset(&msg->to.tag)) {
 
-		st = list_ledata(hash_lookup(sip->ht_strans_mrg,
+		st = re_list_ledata(hash_lookup(sip->ht_strans_mrg,
 					     hash_joaat_pl(&msg->callid),
 					     cmp_merge_handler, (void *)msg));
 		if (st) {

@@ -137,7 +137,7 @@ int sipsess_ack_again(struct sipsess_sock *sock, const struct sip_msg *msg)
 {
 	struct sipsess_ack *ack;
 
-	ack = list_ledata(hash_lookup(sock->ht_ack,
+	ack = re_list_ledata(hash_lookup(sock->ht_ack,
 				      hash_joaat_pl(&msg->callid),
 				      cmp_handler, (void *)msg));
 	if (!ack)

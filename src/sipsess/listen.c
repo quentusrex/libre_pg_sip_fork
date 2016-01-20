@@ -51,7 +51,7 @@ static bool cmp_handler(struct le *le, void *arg)
 static struct sipsess *sipsess_find(struct sipsess_sock *sock,
 				    const struct sip_msg *msg)
 {
-	return list_ledata(hash_lookup(sock->ht_sess,
+	return re_list_ledata(hash_lookup(sock->ht_sess,
 				       hash_joaat_pl(&msg->callid),
 				       cmp_handler, (void *)msg));
 }

@@ -18,7 +18,7 @@
  *
  * @param list Linked list
  */
-void list_init(struct list *list)
+void re_list_init(struct list *list)
 {
 	if (!list)
 		return;
@@ -33,7 +33,7 @@ void list_init(struct list *list)
  *
  * @param list Linked list
  */
-void list_flush(struct list *list)
+void re_list_flush(struct list *list)
 {
 	struct le *le;
 
@@ -51,7 +51,7 @@ void list_flush(struct list *list)
 		mem_deref(data);
 	}
 
-	list_init(list);
+	re_list_init(list);
 }
 
 
@@ -60,7 +60,7 @@ void list_flush(struct list *list)
  *
  * @param list Linked list
  */
-void list_clear(struct list *list)
+void re_list_clear(struct list *list)
 {
 	struct le *le;
 
@@ -76,7 +76,7 @@ void list_clear(struct list *list)
 		le = next;
 	}
 
-	list_init(list);
+	re_list_init(list);
 }
 
 
@@ -87,7 +87,7 @@ void list_clear(struct list *list)
  * @param le    List element
  * @param data  Element data
  */
-void list_append(struct list *list, struct le *le, void *data)
+void re_list_append(struct list *list, struct le *le, void *data)
 {
 	if (!list || !le)
 		return;
@@ -119,7 +119,7 @@ void list_append(struct list *list, struct le *le, void *data)
  * @param le    List element
  * @param data  Element data
  */
-void list_prepend(struct list *list, struct le *le, void *data)
+void re_list_prepend(struct list *list, struct le *le, void *data)
 {
 	if (!list || !le)
 		return;
@@ -152,7 +152,7 @@ void list_prepend(struct list *list, struct le *le, void *data)
  * @param ile   List element to insert
  * @param data  Element data
  */
-void list_insert_before(struct list *list, struct le *le, struct le *ile,
+void re_list_insert_before(struct list *list, struct le *le, struct le *ile,
 		       void *data)
 {
 	if (!list || !le || !ile)
@@ -185,7 +185,7 @@ void list_insert_before(struct list *list, struct le *le, struct le *ile,
  * @param ile   List element to insert
  * @param data  Element data
  */
-void list_insert_after(struct list *list, struct le *le, struct le *ile,
+void re_list_insert_after(struct list *list, struct le *le, struct le *ile,
 		       void *data)
 {
 	if (!list || !le || !ile)
@@ -215,7 +215,7 @@ void list_insert_after(struct list *list, struct le *le, struct le *ile,
  *
  * @param le    List element to remove
  */
-void list_unlink(struct le *le)
+void re_list_unlink(struct le *le)
 {
 	struct list *list;
 
@@ -247,7 +247,7 @@ void list_unlink(struct le *le)
  * @param sh    Sort handler
  * @param arg   Handler argument
  */
-void list_sort(struct list *list, list_sort_h *sh, void *arg)
+void re_list_sort(struct list *list, re_list_sort_h *sh, void *arg)
 {
 	struct le *le;
 	bool sort;
@@ -268,8 +268,8 @@ void list_sort(struct list *list, list_sort_h *sh, void *arg)
 		else {
 			struct le *tle = le->next;
 
-			list_unlink(le);
-			list_insert_after(list, tle, le, le->data);
+			re_list_unlink(le);
+			re_list_insert_after(list, tle, le, le->data);
 			sort = true;
 		}
 	}
@@ -290,8 +290,8 @@ void list_sort(struct list *list, list_sort_h *sh, void *arg)
  *
  * @return Current list element if handler returned true
  */
-struct le *list_apply(const struct list *list, bool fwd,
-		      list_apply_h *ah, void *arg)
+struct le *re_list_apply(const struct list *list, bool fwd,
+		      re_list_apply_h *ah, void *arg)
 {
 	struct le *le;
 
@@ -320,7 +320,7 @@ struct le *list_apply(const struct list *list, bool fwd,
  *
  * @return First list element (NULL if empty)
  */
-struct le *list_head(const struct list *list)
+struct le *re_list_head(const struct list *list)
 {
 	return list ? list->head : NULL;
 }
@@ -333,7 +333,7 @@ struct le *list_head(const struct list *list)
  *
  * @return Last list element (NULL if empty)
  */
-struct le *list_tail(const struct list *list)
+struct le *re_list_tail(const struct list *list)
 {
 	return list ? list->tail : NULL;
 }
@@ -346,7 +346,7 @@ struct le *list_tail(const struct list *list)
  *
  * @return Number of list elements
  */
-uint32_t list_count(const struct list *list)
+uint32_t re_list_count(const struct list *list)
 {
 	uint32_t n = 0;
 	struct le *le;

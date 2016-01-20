@@ -85,7 +85,7 @@ static struct ice_cand *cand_default(const struct list *lcandl,
 	struct le *le;
 
 	/* NOTE: list must be sorted by priority */
-	for (le = list_head(lcandl); le; le = le->next) {
+	for (le = re_list_head(lcandl); le; le = le->next) {
 
 		struct ice_cand *cand = le->data;
 

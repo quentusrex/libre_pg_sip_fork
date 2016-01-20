@@ -266,7 +266,7 @@ static bool response_handler(const struct sip_msg *msg, void *arg)
 	struct sip_ctrans *ct;
 	struct sip *sip = arg;
 
-	ct = list_ledata(hash_lookup(sip->ht_ctrans,
+	ct = re_list_ledata(hash_lookup(sip->ht_ctrans,
 				     hash_joaat_pl(&msg->via.branch),
 				     cmp_handler, (void *)msg));
 	if (!ct)

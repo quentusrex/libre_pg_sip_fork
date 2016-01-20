@@ -48,7 +48,7 @@ static void destructor(void *arg)
 {
 	struct bfcp_ctrans *ct = arg;
 
-	list_unlink(&ct->le);
+	re_list_unlink(&ct->le);
 	mem_deref(ct->mb);
 }
 
@@ -84,7 +84,7 @@ static void tmr_handler(void *arg)
 	uint32_t timeout;
 	int err;
 
-	ct = list_ledata(bc->ctransl.head);
+	ct = re_list_ledata(bc->ctransl.head);
 	if (!ct)
 		return;
 
@@ -116,7 +116,7 @@ bool bfcp_handle_response(struct bfcp_conn *bc, const struct bfcp_msg *msg)
 	if (!bc || !msg)
 		return false;
 
-	ct = list_ledata(bc->ctransl.head);
+	ct = re_list_ledata(bc->ctransl.head);
 	if (!ct)
 		return false;
 
@@ -187,7 +187,7 @@ int bfcp_vrequest(struct bfcp_conn *bc, const struct sa *dst, uint8_t ver,
 		bc->txc = 1;
 	}
 
-	list_append(&bc->ctransl, &ct->le, ct);
+	re_list_append(&bc->ctransl, &ct->le, ct);
 
  out:
 	if (err)

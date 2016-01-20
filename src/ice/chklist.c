@@ -29,10 +29,10 @@ static int candpairs_form(struct icem *icem)
 	struct le *le;
 	int err = 0;
 
-	if (list_isempty(&icem->lcandl))
+	if (re_list_isempty(&icem->lcandl))
 		return ENOENT;
 
-	if (list_isempty(&icem->rcandl)) {
+	if (re_list_isempty(&icem->rcandl)) {
 		DEBUG_WARNING("%s: no remote candidates\n", icem->name);
 		return ENOENT;
 	}
@@ -167,7 +167,7 @@ int icem_checklist_form(struct icem *icem)
 		return EINVAL;
 	}
 
-	if (!list_isempty(&icem->checkl))
+	if (!re_list_isempty(&icem->checkl))
 		return EALREADY;
 
 	/* 1. form candidate pairs */
@@ -224,7 +224,7 @@ static void concluding_ice(struct icem_comp *comp)
 		DEBUG_WARNING("{%s.%u} conclude: no valid candpair found"
 			      " (validlist=%u)\n",
 			      comp->icem->name, comp->id,
-			      list_count(&comp->icem->validl));
+			      re_list_count(&comp->icem->validl));
 		return;
 	}
 
@@ -266,7 +266,7 @@ void icem_checklist_update(struct icem *icem)
 			DEBUG_WARNING("{%s.%u} no valid candidate pair"
 				      " (validlist=%u)\n",
 				      icem->name, comp->id,
-				      list_count(&icem->validl));
+				      re_list_count(&icem->validl));
 			err = ENOENT;
 			break;
 		}

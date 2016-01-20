@@ -21,7 +21,7 @@ static void stream_destructor(void *arg)
 {
 	struct srtp_stream *strm = arg;
 
-	list_unlink(&strm->le);
+	re_list_unlink(&strm->le);
 }
 
 
@@ -45,7 +45,7 @@ static struct srtp_stream *stream_new(struct srtp *srtp, uint32_t ssrc)
 {
 	struct srtp_stream *strm;
 
-	if (list_count(&srtp->streaml) >= MAX_STREAMS)
+	if (re_list_count(&srtp->streaml) >= MAX_STREAMS)
 		return NULL;
 
 	strm = mem_zalloc(sizeof(*strm), stream_destructor);
@@ -56,7 +56,7 @@ static struct srtp_stream *stream_new(struct srtp *srtp, uint32_t ssrc)
 	srtp_replay_init(&strm->replay_rtp);
 	srtp_replay_init(&strm->replay_rtcp);
 
-	list_append(&srtp->streaml, &strm->le, strm);
+	re_list_append(&srtp->streaml, &strm->le, strm);
 
 	return strm;
 }

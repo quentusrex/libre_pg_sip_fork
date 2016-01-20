@@ -50,8 +50,8 @@ static void destructor(void *arg)
 		break;
 	}
 
-	list_flush(&attr->attrl);
-	list_unlink(&attr->le);
+	re_list_flush(&attr->attrl);
+	re_list_unlink(&attr->le);
 }
 
 
@@ -407,7 +407,7 @@ int bfcp_attrs_decode(struct list *attrl, struct mbuf *mb, size_t len,
 		if (err)
 			break;
 
-		list_append(attrl, &attr->le, attr);
+		re_list_append(attrl, &attr->le, attr);
 	}
 
 	mb->end = end;
@@ -419,7 +419,7 @@ int bfcp_attrs_decode(struct list *attrl, struct mbuf *mb, size_t len,
 struct bfcp_attr *bfcp_attrs_find(const struct list *attrl,
 				  enum bfcp_attrib type)
 {
-	struct le *le = list_head(attrl);
+	struct le *le = re_list_head(attrl);
 
 	while (le) {
 		struct bfcp_attr *attr = le->data;
@@ -437,7 +437,7 @@ struct bfcp_attr *bfcp_attrs_find(const struct list *attrl,
 struct bfcp_attr *bfcp_attrs_apply(const struct list *attrl,
 				   bfcp_attr_h *h, void *arg)
 {
-	struct le *le = list_head(attrl);
+	struct le *le = re_list_head(attrl);
 
 	while (le) {
 		struct bfcp_attr *attr = le->data;
@@ -613,7 +613,7 @@ int bfcp_attrs_print(struct re_printf *pf, const struct list *attrl,
 	struct le *le;
 	int err = 0;
 
-	for (le=list_head(attrl); le; le=le->next) {
+	for (le=re_list_head(attrl); le; le=le->next) {
 
 		const struct bfcp_attr *attr = le->data;
 		unsigned i;

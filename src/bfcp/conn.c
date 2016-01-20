@@ -20,7 +20,7 @@ static void destructor(void *arg)
 {
 	struct bfcp_conn *bc = arg;
 
-	list_flush(&bc->ctransl);
+	re_list_flush(&bc->ctransl);
 	tmr_cancel(&bc->tmr1);
 	tmr_cancel(&bc->tmr2);
 	mem_deref(bc->us);

@@ -58,7 +58,7 @@ static bool hash_cmp_handler(struct le *le, void *arg)
 
 static struct perm *perm_find(const struct turnc *turnc, const struct sa *peer)
 {
-	return list_ledata(hash_lookup(turnc->perms, sa_hash(peer, SA_ADDR),
+	return re_list_ledata(hash_lookup(turnc->perms, sa_hash(peer, SA_ADDR),
 				       hash_cmp_handler, (void *)peer));
 }
 

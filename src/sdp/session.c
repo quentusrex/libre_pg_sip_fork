@@ -19,10 +19,10 @@ static void destructor(void *arg)
 {
 	struct sdp_session *sess = arg;
 
-	list_flush(&sess->lmedial);
-	list_flush(&sess->medial);
-	list_flush(&sess->rattrl);
-	list_flush(&sess->lattrl);
+	re_list_flush(&sess->lmedial);
+	re_list_flush(&sess->medial);
+	re_list_flush(&sess->rattrl);
+	re_list_flush(&sess->lattrl);
 }
 
 
@@ -81,7 +81,7 @@ void sdp_session_rreset(struct sdp_session *sess)
 
 	sa_init(&sess->raddr, AF_INET);
 
-	list_flush(&sess->rattrl);
+	re_list_flush(&sess->rattrl);
 
 	sess->rdir = SDP_SENDRECV;
 

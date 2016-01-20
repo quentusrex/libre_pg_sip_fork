@@ -143,7 +143,7 @@ void *mem_alloc(size_t size, mem_destroy_h *dh)
 #if MEM_DEBUG
 	memset(&m->le, 0, sizeof(struct le));
 	mem_lock();
-	list_append(&meml, &m->le, m);
+	re_list_append(&meml, &m->le, m);
 	mem_unlock();
 #endif
 
@@ -210,7 +210,7 @@ void *mem_realloc(void *data, size_t size)
 		}
 	}
 
-	list_unlink(&m->le);
+	re_list_unlink(&m->le);
 	mem_unlock();
 #endif
 
@@ -218,7 +218,7 @@ void *mem_realloc(void *data, size_t size)
 
 #if MEM_DEBUG
 	mem_lock();
-	list_append(&meml, m2 ? &m2->le : &m->le, m2 ? m2 : m);
+	re_list_append(&meml, m2 ? &m2->le : &m->le, m2 ? m2 : m);
 	mem_unlock();
 #endif
 
@@ -323,7 +323,7 @@ void *mem_deref(void *data)
 
 #if MEM_DEBUG
 	mem_lock();
-	list_unlink(&m->le);
+	re_list_unlink(&m->le);
 	mem_unlock();
 #endif
 
@@ -409,7 +409,7 @@ void mem_debug(void)
 	uint32_t n;
 
 	mem_lock();
-	n = list_count(&meml);
+	n = re_list_count(&meml);
 	mem_unlock();
 
 	if (!n)
@@ -418,7 +418,7 @@ void mem_debug(void)
 	DEBUG_WARNING("Memory leaks (%u):\n", n);
 
 	mem_lock();
-	(void)list_apply(&meml, true, debug_handler, NULL);
+	(void)re_list_apply(&meml, true, debug_handler, NULL);
 	mem_unlock();
 #endif
 }
@@ -461,7 +461,7 @@ int mem_status(struct re_printf *pf, void *unused)
 
 	mem_lock();
 	memcpy(&stat, &memstat, sizeof(stat));
-	c = list_count(&meml);
+	c = re_list_count(&meml);
 	mem_unlock();
 
 	err |= re_hprintf(pf, "Memory status: (%u bytes overhead pr block)\n",

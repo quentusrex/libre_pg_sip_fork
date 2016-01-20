@@ -26,13 +26,13 @@ static void destructor(void *arg)
 	if (ka->kap)
 		*ka->kap = NULL;
 
-	list_unlink(&ka->le);
+	re_list_unlink(&ka->le);
 }
 
 
 void sip_keepalive_signal(struct list *kal, int err)
 {
-	struct le *le = list_head(kal);
+	struct le *le = re_list_head(kal);
 
 	while (le) {
 
@@ -42,7 +42,7 @@ void sip_keepalive_signal(struct list *kal, int err)
 
 		le = le->next;
 
-		list_unlink(&ka->le);
+		re_list_unlink(&ka->le);
 		mem_deref(ka);
 
 		kah(err, arg);

@@ -25,13 +25,13 @@ static void icem_destructor(void *data)
 {
 	struct icem *icem = data;
 
-	list_unlink(&icem->le);
+	re_list_unlink(&icem->le);
 	tmr_cancel(&icem->tmr_pace);
-	list_flush(&icem->compl);
-	list_flush(&icem->validl);
-	list_flush(&icem->checkl);
-	list_flush(&icem->lcandl);
-	list_flush(&icem->rcandl);
+	re_list_flush(&icem->compl);
+	re_list_flush(&icem->validl);
+	re_list_flush(&icem->checkl);
+	re_list_flush(&icem->lcandl);
+	re_list_flush(&icem->rcandl);
 	mem_deref(icem->rufrag);
 	mem_deref(icem->rpwd);
 }
@@ -67,10 +67,10 @@ int icem_alloc(struct icem **icemp, struct ice *ice, int proto, int layer,
 		return ENOMEM;
 
 	tmr_init(&icem->tmr_pace);
-	list_init(&icem->lcandl);
-	list_init(&icem->rcandl);
-	list_init(&icem->checkl);
-	list_init(&icem->validl);
+	re_list_init(&icem->lcandl);
+	re_list_init(&icem->rcandl);
+	re_list_init(&icem->checkl);
+	re_list_init(&icem->validl);
 
 	icem->ice   = ice;
 	icem->layer = layer;
@@ -84,7 +84,7 @@ int icem_alloc(struct icem **icemp, struct ice *ice, int proto, int layer,
 	if (err)
 		goto out;
 
-	list_append(&ice->ml, &icem->le, icem);
+	re_list_append(&ice->ml, &icem->le, icem);
 
  out:
 	if (err)
@@ -135,7 +135,7 @@ int icem_comp_add(struct icem *icem, unsigned compid, void *sock)
 	if (err)
 		return err;
 
-	list_append(&icem->compl, &comp->le, comp);
+	re_list_append(&icem->compl, &comp->le, comp);
 
 	return 0;
 }
@@ -345,7 +345,7 @@ int icem_debug(struct re_printf *pf, const struct icem *icem)
 
 	err |= re_hprintf(pf, "----- ICE Media <%s> -----\n", icem->name);
 
-	err |= re_hprintf(pf, " Components: (%u)\n", list_count(&icem->compl));
+	err |= re_hprintf(pf, " Components: (%u)\n", re_list_count(&icem->compl));
 	for (le = icem->compl.head; le; le = le->next) {
 		struct icem_comp *comp = le->data;
 

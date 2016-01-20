@@ -22,7 +22,7 @@ static void destructor(void *arg)
 {
 	struct sipsess_request *req = arg;
 
-	list_unlink(&req->le);
+	re_list_unlink(&req->le);
 	mem_deref(req->ctype);
 	mem_deref(req->body);
 	mem_deref(req->req);
@@ -56,7 +56,7 @@ int sipsess_request_alloc(struct sipsess_request **reqp, struct sipsess *sess,
 	if (!req)
 		return ENOMEM;
 
-	list_append(&sess->requestl, &req->le, req);
+	re_list_append(&sess->requestl, &req->le, req);
 
 	if (ctype) {
 		err = str_dup(&req->ctype, ctype);

@@ -117,7 +117,7 @@ static int handle_stun_full(struct ice *ice, struct icem *icem,
 		DEBUG_WARNING("{%s.%u} local candidate not found"
 			      " (checklist=%u) (src=%J)\n",
 			      icem->name, comp->id,
-			      list_count(&icem->checkl), src);
+			      re_list_count(&icem->checkl), src);
 		return 0;
 	}
 

@@ -32,7 +32,7 @@ static void destructor(void *arg)
 	}
 
 	hash_unlink(&e->he);
-	list_unlink(&e->le);
+	re_list_unlink(&e->le);
 	mem_deref(e->key);
 }
 
@@ -95,7 +95,7 @@ int odict_entry_add(struct odict *o, const char *key,
 	if (err)
 		goto out;
 
-	list_append(&o->lst, &e->le, e);
+	re_list_append(&o->lst, &e->le, e);
 	hash_append(o->ht, hash_fast_str(e->key), &e->he, e);
 
  out:

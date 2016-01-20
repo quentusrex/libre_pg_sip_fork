@@ -152,8 +152,8 @@ static void conn_destructor(void *data)
 {
 	struct tcp_conn *tc = data;
 
-	list_flush(&tc->helpers);
-	list_flush(&tc->sendq);
+	re_list_flush(&tc->helpers);
+	re_list_flush(&tc->sendq);
 
 	if (tc->fdc >= 0) {
 		fd_close(tc->fdc);
@@ -166,7 +166,7 @@ static void helper_destructor(void *data)
 {
 	struct tcp_helper *th = data;
 
-	list_unlink(&th->le);
+	re_list_unlink(&th->le);
 }
 
 
@@ -174,7 +174,7 @@ static void qent_destructor(void *arg)
 {
 	struct tcp_qent *qe = arg;
 
-	list_unlink(&qe->le);
+	re_list_unlink(&qe->le);
 	mem_deref(qe->mb.buf);
 }
 
@@ -200,7 +200,7 @@ static int enqueue(struct tcp_conn *tc, struct mbuf *mb)
 	if (!qe)
 		return ENOMEM;
 
-	list_append(&tc->sendq, &qe->le, qe);
+	re_list_append(&tc->sendq, &qe->le, qe);
 
 	mbuf_init(&qe->mb);
 
@@ -218,7 +218,7 @@ static int enqueue(struct tcp_conn *tc, struct mbuf *mb)
 
 static int dequeue(struct tcp_conn *tc)
 {
-	struct tcp_qent *qe = list_ledata(tc->sendq.head);
+	struct tcp_qent *qe = re_list_ledata(tc->sendq.head);
 	ssize_t n;
 #ifdef MSG_NOSIGNAL
 	const int flags = MSG_NOSIGNAL; /* disable SIGPIPE signal */
@@ -256,7 +256,7 @@ static int dequeue(struct tcp_conn *tc)
 
 static void conn_close(struct tcp_conn *tc, int err)
 {
-	list_flush(&tc->sendq);
+	re_list_flush(&tc->sendq);
 	tc->txqsz = 0;
 
 	/* Stop polling */
@@ -452,7 +452,7 @@ static struct tcp_conn *conn_alloc(tcp_estab_h *eh, tcp_recv_h *rh,
 	if (!tc)
 		return NULL;
 
-	list_init(&tc->helpers);
+	re_list_init(&tc->helpers);
 
 	tc->fdc    = -1;
 	tc->rxsz   = TCP_RXSZ_DEFAULT;
@@ -1365,7 +1365,7 @@ int tcp_register_helper(struct tcp_helper **thp, struct tcp_conn *tc,
 	if (!th)
 		return ENOMEM;
 
-	list_append(&tc->helpers, &th->le, th);
+	re_list_append(&tc->helpers, &th->le, th);
 
 	th->layer  = layer;
 	th->estabh = eh ? eh : helper_estab_handler;
@@ -1373,7 +1373,7 @@ int tcp_register_helper(struct tcp_helper **thp, struct tcp_conn *tc,
 	th->recvh  = rh ? rh : helper_recv_handler;
 	th->arg = arg;
 
-	list_sort(&tc->helpers, sort_handler, NULL);
+	re_list_sort(&tc->helpers, sort_handler, NULL);
 
 	if (thp)
 		*thp = th;

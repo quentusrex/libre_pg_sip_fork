@@ -105,7 +105,7 @@ static struct sipnot *sipnot_find(struct sipevent_sock *sock,
 	cmp.msg = msg;
 	cmp.evt = evt;
 
-	return list_ledata(hash_lookup(sock->ht_not,
+	return re_list_ledata(hash_lookup(sock->ht_not,
 				       hash_joaat_pl(&msg->callid),
 				       not_cmp_handler, &cmp));
 }
@@ -120,7 +120,7 @@ struct sipsub *sipsub_find(struct sipevent_sock *sock,
 	cmp.msg = msg;
 	cmp.evt = evt;
 
-	return list_ledata(hash_lookup(sock->ht_sub,
+	return re_list_ledata(hash_lookup(sock->ht_sub,
 				       hash_joaat_pl(&msg->callid), full ?
 				       sub_cmp_handler : sub_cmp_half_handler,
 				       &cmp));

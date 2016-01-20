@@ -24,7 +24,7 @@ static void destructor(void *arg)
 {
 	struct bfcp_msg *msg = arg;
 
-	list_flush(&msg->attrl);
+	re_list_flush(&msg->attrl);
 }
 
 

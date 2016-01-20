@@ -105,9 +105,9 @@ void ice_switch_local_role(struct ice *ice)
  *
  * @note:    O (n ^ 2)
  */
-uint32_t ice_list_unique(struct list *list, list_unique_h *uh)
+uint32_t ice_list_unique(struct list *list, re_list_unique_h *uh)
 {
-	struct le *le1 = list_head(list);
+	struct le *le1 = re_list_head(list);
 	uint32_t n = 0;
 
 	while (le1 && le1 != list->tail) {

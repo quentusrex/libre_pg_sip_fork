@@ -65,7 +65,7 @@ static bool std_sort_handler(struct le *le1, struct le *le2, void *arg)
  */
 void dns_rrlist_sort(struct list *rrl, uint16_t type)
 {
-	list_sort(rrl, std_sort_handler, &type);
+	re_list_sort(rrl, std_sort_handler, &type);
 	/* todo add SRV postprocessing for weighted load balancing. */
 }
 
@@ -76,7 +76,7 @@ static struct dnsrr *rrlist_apply(struct list *rrl, const char *name,
 				  bool recurse, uint32_t depth,
 				  dns_rrlist_h *rrlh, void *arg)
 {
-	struct le *le = list_head(rrl);
+	struct le *le = re_list_head(rrl);
 
 	if (depth > CNAME_RECURSE_MAX)
 		return NULL;

@@ -47,7 +47,7 @@ static void completed(struct stun_ctrans *ct, int err, uint16_t scode,
 	stun_resp_h *resph = ct->resph;
 	void *arg = ct->arg;
 
-	list_unlink(&ct->le);
+	re_list_unlink(&ct->le);
 	tmr_cancel(&ct->tmr);
 
 	if (ct->ctp) {
@@ -69,7 +69,7 @@ static void destructor(void *arg)
 {
 	struct stun_ctrans *ct = arg;
 
-	list_unlink(&ct->le);
+	re_list_unlink(&ct->le);
 	tmr_cancel(&ct->tmr);
 	mem_deref(ct->key);
 	mem_deref(ct->sock);
@@ -186,7 +186,7 @@ int stun_ctrans_recv(struct stun *stun, const struct stun_msg *msg,
 		/*@fallthrough@*/
 
 	case STUN_CLASS_SUCCESS_RESP:
-		ct = list_ledata(list_apply(&stun->ctl, true,
+		ct = re_list_ledata(re_list_apply(&stun->ctl, true,
 					    match_handler, (void *)msg));
 		if (!ct) {
 			err = ENOENT;
@@ -239,7 +239,7 @@ int stun_ctrans_request(struct stun_ctrans **ctp, struct stun *stun, int proto,
 	if (!ct)
 		return ENOMEM;
 
-	list_append(&stun->ctl, &ct->le, ct);
+	re_list_append(&stun->ctl, &ct->le, ct);
 	memcpy(ct->tid, tid, STUN_TID_SIZE);
 	ct->proto = proto;
 	ct->sock  = mem_ref(sock);
@@ -348,7 +348,7 @@ void stun_ctrans_close(struct stun *stun)
 	if (!stun)
 		return;
 
-	(void)list_apply(&stun->ctl, true, close_handler, NULL);
+	(void)re_list_apply(&stun->ctl, true, close_handler, NULL);
 }
 
 
@@ -378,9 +378,9 @@ int stun_ctrans_debug(struct re_printf *pf, const struct stun *stun)
 		return 0;
 
 	err = re_hprintf(pf, "STUN client transactions: (%u)\n",
-			 list_count(&stun->ctl));
+			 re_list_count(&stun->ctl));
 
-	(void)list_apply(&stun->ctl, true, debug_handler, pf);
+	(void)re_list_apply(&stun->ctl, true, debug_handler, pf);
 
 	return err;
 }

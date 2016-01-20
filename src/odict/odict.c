@@ -16,7 +16,7 @@ static void destructor(void *arg)
 	struct odict *o = arg;
 
 	hash_clear(o->ht);
-	list_flush(&o->lst);
+	re_list_flush(&o->lst);
 	mem_deref(o->ht);
 }
 
@@ -54,7 +54,7 @@ const struct odict_entry *odict_lookup(const struct odict *o, const char *key)
 	if (!o || !key)
 		return NULL;
 
-	le = list_head(hash_list(o->ht, hash_fast_str(key)));
+	le = re_list_head(hash_list(o->ht, hash_fast_str(key)));
 
 	while (le) {
 		const struct odict_entry *e = le->data;
@@ -78,7 +78,7 @@ size_t odict_count(const struct odict *o, bool nested)
 		return 0;
 
 	if (!nested)
-		return list_count(&o->lst);
+		return re_list_count(&o->lst);
 
 	for (le=o->lst.head; le; le=le->next) {
 

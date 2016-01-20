@@ -66,7 +66,7 @@ static bool lookup_handler(struct le *le, void *arg)
 static inline struct dname *dname_lookup(struct hash *ht_dname,
 					 const char *name)
 {
-	return list_ledata(hash_lookup(ht_dname, hash_joaat_str_ci(name),
+	return re_list_ledata(hash_lookup(ht_dname, hash_joaat_str_ci(name),
 				       lookup_handler, (void *)name));
 }
 

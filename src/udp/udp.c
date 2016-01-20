@@ -117,7 +117,7 @@ static void udp_destructor(void *data)
 {
 	struct udp_sock *us = data;
 
-	list_flush(&us->helpers);
+	re_list_flush(&us->helpers);
 
 	if (-1 != us->fd) {
 		fd_close(us->fd);
@@ -273,7 +273,7 @@ int udp_listen(struct udp_sock **usp, const struct sa *local,
 	if (!us)
 		return ENOMEM;
 
-	list_init(&us->helpers);
+	re_list_init(&us->helpers);
 
 	us->fd  = -1;
 	us->fd6 = -1;
@@ -738,7 +738,7 @@ static void helper_destructor(void *data)
 {
 	struct udp_helper *uh = data;
 
-	list_unlink(&uh->le);
+	re_list_unlink(&uh->le);
 }
 
 
@@ -777,14 +777,14 @@ int udp_register_helper(struct udp_helper **uhp, struct udp_sock *us,
 	if (!uh)
 		return ENOMEM;
 
-	list_append(&us->helpers, &uh->le, uh);
+	re_list_append(&us->helpers, &uh->le, uh);
 
 	uh->layer = layer;
 	uh->sendh = sh ? sh : helper_send_handler;
 	uh->recvh = rh ? rh : helper_recv_handler;
 	uh->arg   = arg;
 
-	list_sort(&us->helpers, sort_handler, NULL);
+	re_list_sort(&us->helpers, sort_handler, NULL);
 
 	if (uhp)
 		*uhp = uh;

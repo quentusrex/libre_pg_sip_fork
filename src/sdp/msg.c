@@ -176,7 +176,7 @@ static int media_decode(struct sdp_media **mp, struct sdp_session *sess,
 		     &name, &port, &proto, &fmtv))
 		return EBADMSG;
 
-	m = list_ledata(*mp ? (*mp)->le.next : sess->medial.head);
+	m = re_list_ledata(*mp ? (*mp)->le.next : sess->medial.head);
 	if (!m) {
 		if (!offer)
 			return EPROTO;
@@ -188,8 +188,8 @@ static int media_decode(struct sdp_media **mp, struct sdp_session *sess,
 				return err;
 		}
 		else {
-			list_unlink(&m->le);
-			list_append(&sess->medial, &m->le, m);
+			re_list_unlink(&m->le);
+			re_list_append(&sess->medial, &m->le, m);
 		}
 
 		m->uproto = mem_deref(m->uproto);
@@ -509,8 +509,8 @@ int sdp_encode(struct mbuf **mbp, struct sdp_session *sess, bool offer)
 		if (m->disabled)
 			continue;
 
-		list_unlink(&m->le);
-		list_append(&sess->medial, &m->le, m);
+		re_list_unlink(&m->le);
+		re_list_append(&sess->medial, &m->le, m);
 	}
 
 	for (le=sess->medial.head; le; le=le->next) {

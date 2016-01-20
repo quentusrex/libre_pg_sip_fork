@@ -80,7 +80,7 @@ void hash_append(struct hash *h, uint32_t key, struct le *le, void *data)
 	if (!h || !le)
 		return;
 
-	list_append(&h->bucket[key & (h->bsize-1)], le, data);
+	re_list_append(&h->bucket[key & (h->bsize-1)], le, data);
 }
 
 
@@ -91,7 +91,7 @@ void hash_append(struct hash *h, uint32_t key, struct le *le, void *data)
  */
 void hash_unlink(struct le *le)
 {
-	list_unlink(le);
+	re_list_unlink(le);
 }
 
 
@@ -105,13 +105,13 @@ void hash_unlink(struct le *le)
  *
  * @return List element if traversing stopped, otherwise NULL
  */
-struct le *hash_lookup(const struct hash *h, uint32_t key, list_apply_h *ah,
+struct le *hash_lookup(const struct hash *h, uint32_t key, re_list_apply_h *ah,
 		       void *arg)
 {
 	if (!h || !ah)
 		return NULL;
 
-	return list_apply(&h->bucket[key & (h->bsize-1)], true, ah, arg);
+	return re_list_apply(&h->bucket[key & (h->bsize-1)], true, ah, arg);
 }
 
 
@@ -124,7 +124,7 @@ struct le *hash_lookup(const struct hash *h, uint32_t key, list_apply_h *ah,
  *
  * @return List element if traversing stopped, otherwise NULL
  */
-struct le *hash_apply(const struct hash *h, list_apply_h *ah, void *arg)
+struct le *hash_apply(const struct hash *h, re_list_apply_h *ah, void *arg)
 {
 	struct le *le = NULL;
 	uint32_t i;
@@ -133,7 +133,7 @@ struct le *hash_apply(const struct hash *h, list_apply_h *ah, void *arg)
 		return NULL;
 
 	for (i=0; (i<h->bsize) && !le; i++)
-		le = list_apply(&h->bucket[i], true, ah, arg);
+		le = re_list_apply(&h->bucket[i], true, ah, arg);
 
 	return le;
 }
@@ -179,7 +179,7 @@ void hash_flush(struct hash *h)
 		return;
 
 	for (i=0; i<h->bsize; i++)
-		list_flush(&h->bucket[i]);
+		re_list_flush(&h->bucket[i]);
 }
 
 
@@ -196,7 +196,7 @@ void hash_clear(struct hash *h)
 		return;
 
 	for (i=0; i<h->bsize; i++)
-		list_clear(&h->bucket[i]);
+		re_list_clear(&h->bucket[i]);
 }
 
 

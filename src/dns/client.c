@@ -104,7 +104,7 @@ static bool rr_unlink_handler(struct le *le, void *arg)
 	struct dnsrr *rr = le->data;
 	(void)arg;
 
-	list_unlink(&rr->le_priv);
+	re_list_unlink(&rr->le_priv);
 	mem_deref(rr);
 
 	return false;
@@ -114,7 +114,7 @@ static bool rr_unlink_handler(struct le *le, void *arg)
 static void query_abort(struct dns_query *q)
 {
 	if (q->tc) {
-		list_unlink(&q->le_tc);
+		re_list_unlink(&q->le_tc);
 		q->tc = mem_deref(q->tc);
 	}
 
@@ -133,7 +133,7 @@ static void query_destructor(void *data)
 	mem_deref(q->name);
 
 	for (i=0; i<ARRAY_SIZE(q->rrlv); i++)
-		(void)list_apply(&q->rrlv[i], true, rr_unlink_handler, NULL);
+		(void)re_list_apply(&q->rrlv[i], true, rr_unlink_handler, NULL);
 }
 
 
@@ -221,7 +221,7 @@ static int reply_recv(struct dnsc *dnsc, struct mbuf *mb)
 	dq.type     = ntohs(mbuf_read_u16(mb));
 	dq.dnsclass = ntohs(mbuf_read_u16(mb));
 
-	q = list_ledata(hash_lookup(dnsc->ht_query, hash_joaat_str_ci(dq.name),
+	q = re_list_ledata(hash_lookup(dnsc->ht_query, hash_joaat_str_ci(dq.name),
 				    query_cmp_handler, &dq));
 	if (!q) {
 		err = ENOENT;
@@ -255,7 +255,7 @@ static int reply_recv(struct dnsc *dnsc, struct mbuf *mb)
 				goto out;
 			}
 
-			list_append(&q->rrlv[i], &rr->le_priv, rr);
+			re_list_append(&q->rrlv[i], &rr->le_priv, rr);
 		}
 	}
 
@@ -263,8 +263,8 @@ static int reply_recv(struct dnsc *dnsc, struct mbuf *mb)
 
 		struct dnsrr *rrh, *rrt;
 
-		rrh = list_ledata(list_head(&q->rrlv[0]));
-		rrt = list_ledata(list_tail(&q->rrlv[0]));
+		rrh = re_list_ledata(re_list_head(&q->rrlv[0]));
+		rrt = re_list_ledata(re_list_tail(&q->rrlv[0]));
 
 		/* Wait for last AXFR reply with terminating SOA record */
 		if (dq.hdr.rcode == DNS_RCODE_OK && dq.hdr.nans > 0 &&
@@ -369,7 +369,7 @@ static void tcpconn_timeout_handler(void *arg)
 static void tcp_estab_handler(void *arg)
 {
 	struct tcpconn *tc = arg;
-	struct le *le = list_head(&tc->ql);
+	struct le *le = re_list_head(&tc->ql);
 	int err = 0;
 
 	DEBUG_INFO("connection (%J) established\n", &tc->srv);
@@ -424,7 +424,7 @@ static bool tcpconn_fail_handler(struct le *le, void *arg)
 	struct dns_query *q = le->data;
 	int err = *((int *)arg);
 
-	list_unlink(&q->le_tc);
+	re_list_unlink(&q->le_tc);
 	q->tc = mem_deref(q->tc);
 
 	if (q->ntx >= *q->srvc) {
@@ -457,7 +457,7 @@ static void tcpconn_close(struct tcpconn *tc, int err)
 
 	/* avoid trying this connection again (e.g. same address) */
 	tc->conn = mem_deref(tc->conn);
-	(void)list_apply(&tc->ql, true, tcpconn_fail_handler, &err);
+	(void)re_list_apply(&tc->ql, true, tcpconn_fail_handler, &err);
 	mem_deref(tc);
 }
 
@@ -526,7 +526,7 @@ static int send_tcp(struct dns_query *q)
 
 		DEBUG_NOTICE("trying tcp server#%u: %J\n", q->ntx-1, srv);
 
-		tc = list_ledata(hash_lookup(q->dnsc->ht_tcpconn,
+		tc = re_list_ledata(hash_lookup(q->dnsc->ht_tcpconn,
 					     sa_hash(srv, SA_ALL),
 					     tcpconn_cmp_handler,
 					     (void *)srv));
@@ -549,7 +549,7 @@ static int send_tcp(struct dns_query *q)
 			DEBUG_NOTICE("tcp send %J\n", srv);
 		}
 
-		list_append(&tc->ql, &q->le_tc, q);
+		re_list_append(&tc->ql, &q->le_tc, q);
 		q->tc = mem_ref(tc);
 		break;
 	}
@@ -641,7 +641,7 @@ static int query(struct dns_query **qp, struct dnsc *dnsc, uint8_t opcode,
 	mbuf_init(&q->mb);
 
 	for (i=0; i<ARRAY_SIZE(q->rrlv); i++)
-		list_init(&q->rrlv[i]);
+		re_list_init(&q->rrlv[i]);
 
 	err = str_dup(&q->name, name);
 	if (err)

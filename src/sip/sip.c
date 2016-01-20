@@ -49,8 +49,8 @@ static void destructor(void *arg)
 	hash_flush(sip->ht_udpconn);
 	mem_deref(sip->ht_udpconn);
 
-	list_flush(&sip->transpl);
-	list_flush(&sip->lsnrl);
+	re_list_flush(&sip->transpl);
+	re_list_flush(&sip->lsnrl);
 
 	mem_deref(sip->software);
 	mem_deref(sip->dnsc);
@@ -65,7 +65,7 @@ static void lsnr_destructor(void *arg)
 	if (lsnr->lsnrp)
 		*lsnr->lsnrp = NULL;
 
-	list_unlink(&lsnr->le);
+	re_list_unlink(&lsnr->le);
 }
 
 
@@ -200,7 +200,7 @@ int sip_listen(struct sip_lsnr **lsnrp, struct sip *sip, bool req,
 	if (!lsnr)
 		return ENOMEM;
 
-	list_append(&sip->lsnrl, &lsnr->le, lsnr);
+	re_list_append(&sip->lsnrl, &lsnr->le, lsnr);
 
 	lsnr->msgh = msgh;
 	lsnr->arg = arg;

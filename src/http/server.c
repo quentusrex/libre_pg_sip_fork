@@ -70,7 +70,7 @@ static void conn_destructor(void *arg)
 {
 	struct http_conn *conn = arg;
 
-	list_unlink(&conn->le);
+	re_list_unlink(&conn->le);
 	tmr_cancel(&conn->tmr);
 	mem_deref(conn->sc);
 	mem_deref(conn->tc);
@@ -80,7 +80,7 @@ static void conn_destructor(void *arg)
 
 static void conn_close(struct http_conn *conn)
 {
-	list_unlink(&conn->le);
+	re_list_unlink(&conn->le);
 	tmr_cancel(&conn->tmr);
 	conn->sc = mem_deref(conn->sc);
 	conn->tc = mem_deref(conn->tc);
@@ -211,7 +211,7 @@ static void connect_handler(const struct sa *peer, void *arg)
 		goto out;
 	}
 
-	list_append(&sock->connl, &conn->le, conn);
+	re_list_append(&sock->connl, &conn->le, conn);
 	conn->peer = *peer;
 	conn->sock = sock;
 

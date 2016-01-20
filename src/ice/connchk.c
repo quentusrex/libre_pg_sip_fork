@@ -402,7 +402,7 @@ int icem_conncheck_start(struct icem *icem)
 
 	icem_printf(icem, "starting connectivity checks"
 		    " with %u candidate pairs\n",
-		    list_count(&icem->checkl));
+		    re_list_count(&icem->checkl));
 
 	/* add some delay, to wait for call to be 'established' */
 	tmr_start(&icem->tmr_pace, 10, pace_timeout, icem);

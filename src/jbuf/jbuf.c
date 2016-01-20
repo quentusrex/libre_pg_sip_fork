@@ -77,7 +77,7 @@ static void frame_alloc(struct jbuf *jb, struct frame **f)
 
 	le = jb->pooll.head;
 	if (le) {
-		list_unlink(le);
+		re_list_unlink(le);
 		++jb->n;
 	}
 	else {
@@ -92,7 +92,7 @@ static void frame_alloc(struct jbuf *jb, struct frame **f)
 			   f0->hdr.seq, jb->stat.n_overflow);
 
 		f0->mem = mem_deref(f0->mem);
-		list_unlink(le);
+		re_list_unlink(le);
 	}
 
 	*f = le->data;
@@ -105,8 +105,8 @@ static void frame_alloc(struct jbuf *jb, struct frame **f)
 static void frame_deref(struct jbuf *jb, struct frame *f)
 {
 	f->mem = mem_deref(f->mem);
-	list_unlink(&f->le);
-	list_append(&jb->pooll, &f->le, f);
+	re_list_unlink(&f->le);
+	re_list_append(&jb->pooll, &f->le, f);
 	--jb->n;
 }
 
@@ -118,7 +118,7 @@ static void jbuf_destructor(void *data)
 	jbuf_flush(jb);
 
 	/* Free all frames in the pool list */
-	list_flush(&jb->pooll);
+	re_list_flush(&jb->pooll);
 }
 
 
@@ -152,8 +152,8 @@ int jbuf_alloc(struct jbuf **jbp, uint32_t min, uint32_t max)
 	if (!jb)
 		return ENOMEM;
 
-	list_init(&jb->pooll);
-	list_init(&jb->framel);
+	re_list_init(&jb->pooll);
+	re_list_init(&jb->framel);
 
 	jb->min  = min;
 	jb->max  = max;
@@ -166,7 +166,7 @@ int jbuf_alloc(struct jbuf **jbp, uint32_t min, uint32_t max)
 			break;
 		}
 
-		list_append(&jb->pooll, &f->le, f);
+		re_list_append(&jb->pooll, &f->le, f);
 		DEBUG_INFO("alloc: adding to pool list %u\n", i);
 	}
 
@@ -221,7 +221,7 @@ int jbuf_put(struct jbuf *jb, const struct rtp_header *hdr, void *mem)
 	   Frame is later than tail -> append to tail
 	*/
 	if (!tail || seq_less(((struct frame *)tail->data)->hdr.seq, seq)) {
-		list_append(&jb->framel, &f->le, f);
+		re_list_append(&jb->framel, &f->le, f);
 		goto out;
 	}
 
@@ -233,14 +233,14 @@ int jbuf_put(struct jbuf *jb, const struct rtp_header *hdr, void *mem)
 			DEBUG_INFO("put: out-of-sequence"
 				   " - inserting after seq=%u (seq=%u)\n",
 				   seq_le, seq);
-			list_insert_after(&jb->framel, le, &f->le, f);
+			re_list_insert_after(&jb->framel, le, &f->le, f);
 			break;
 		}
 		else if (seq == seq_le) { /* less likely */
 			/* Detect duplicates */
 			DEBUG_INFO("duplicate: seq=%u\n", seq);
 			STAT_INC(n_dups);
-			list_insert_after(&jb->framel, le, &f->le, f);
+			re_list_insert_after(&jb->framel, le, &f->le, f);
 			frame_deref(jb, f);
 			return EALREADY;
 		}
@@ -252,7 +252,7 @@ int jbuf_put(struct jbuf *jb, const struct rtp_header *hdr, void *mem)
 	if (!le) {
 		DEBUG_INFO("put: out-of-sequence"
 			   " - put in head (seq=%u)\n", seq);
-		list_prepend(&jb->framel, &f->le, f);
+		re_list_prepend(&jb->framel, &f->le, f);
 	}
 
 	STAT_INC(n_oos);

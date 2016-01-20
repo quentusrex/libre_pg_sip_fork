@@ -49,5 +49,5 @@ static bool hash_cmp_handler(struct le *le, void *arg)
 
 struct rtp_member *member_find(struct hash *ht, uint32_t src)
 {
-	return list_ledata(hash_lookup(ht, src, hash_cmp_handler, &src));
+	return re_list_ledata(hash_lookup(ht, src, hash_cmp_handler, &src));
 }

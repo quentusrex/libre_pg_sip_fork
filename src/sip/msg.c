@@ -29,7 +29,7 @@ static void hdr_destructor(void *arg)
 {
 	struct sip_hdr *hdr = arg;
 
-	list_unlink(&hdr->le);
+	re_list_unlink(&hdr->le);
 	hash_unlink(&hdr->he);
 }
 
@@ -38,7 +38,7 @@ static void destructor(void *arg)
 {
 	struct sip_msg *msg = arg;
 
-	list_flush(&msg->hdrl);
+	re_list_flush(&msg->hdrl);
 	hash_flush(msg->hdrht);
 	mem_deref(msg->hdrht);
 	mem_deref(msg->sock);
@@ -173,14 +173,14 @@ static inline int hdr_add(struct sip_msg *msg, const struct pl *name,
 			break;
 
 		hash_append(msg->hdrht, id, &hdr->he, mem_ref(hdr));
-		list_append(&msg->hdrl, &hdr->le, mem_ref(hdr));
+		re_list_append(&msg->hdrl, &hdr->le, mem_ref(hdr));
 		break;
 
 	default:
 		if (atomic)
 			hash_append(msg->hdrht, id, &hdr->he, mem_ref(hdr));
 		if (line)
-			list_append(&msg->hdrl, &hdr->le, mem_ref(hdr));
+			re_list_append(&msg->hdrl, &hdr->le, mem_ref(hdr));
 		break;
 	}
 
@@ -474,7 +474,7 @@ const struct sip_hdr *sip_msg_hdr_apply(const struct sip_msg *msg,
 
 	lst = hash_list(msg->hdrht, id);
 
-	le = fwd ? list_head(lst) : list_tail(lst);
+	le = fwd ? re_list_head(lst) : re_list_tail(lst);
 
 	while (le) {
 		const struct sip_hdr *hdr = le->data;
@@ -532,7 +532,7 @@ const struct sip_hdr *sip_msg_xhdr_apply(const struct sip_msg *msg,
 
 	lst = hash_list(msg->hdrht, hdr_hash(&pl));
 
-	le = fwd ? list_head(lst) : list_tail(lst);
+	le = fwd ? re_list_head(lst) : re_list_tail(lst);
 
 	while (le) {
 		const struct sip_hdr *hdr = le->data;
@@ -657,7 +657,7 @@ void sip_msg_dump(const struct sip_msg *msg)
 
 	for (i=0; i<HDR_HASH_SIZE; i++) {
 
-		le = list_head(hash_list(msg->hdrht, i));
+		le = re_list_head(hash_list(msg->hdrht, i));
 
 		while (le) {
 			const struct sip_hdr *hdr = le->data;
@@ -669,7 +669,7 @@ void sip_msg_dump(const struct sip_msg *msg)
 		}
 	}
 
-	le = list_head(&msg->hdrl);
+	le = re_list_head(&msg->hdrl);
 
 	while (le) {
 		const struct sip_hdr *hdr = le->data;

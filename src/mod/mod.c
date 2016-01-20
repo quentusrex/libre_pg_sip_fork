@@ -35,7 +35,7 @@ static struct list modl;  /* struct mod */
  */
 void mod_init(void)
 {
-	list_init(&modl);
+	re_list_init(&modl);
 }
 
 
@@ -44,7 +44,7 @@ void mod_init(void)
  */
 void mod_close(void)
 {
-	list_flush(&modl);
+	re_list_flush(&modl);
 }
 
 
@@ -58,7 +58,7 @@ static void mod_destructor(void *data)
 		DEBUG_NOTICE("close: error (%m)\n", err);
 	}
 
-	list_unlink(&m->le);
+	re_list_unlink(&m->le);
 
 	_mod_close(m->h);
 }
@@ -120,7 +120,7 @@ int mod_load(struct mod **mp, const char *name)
 	if (!m)
 		return ENOMEM;
 
-	list_append(&modl, &m->le, m);
+	re_list_append(&modl, &m->le, m);
 
 	m->h = _mod_open(name);
 	if (!m->h) {
@@ -174,7 +174,7 @@ int mod_add(struct mod **mp, const struct mod_export *me)
 	if (!m)
 		return ENOMEM;
 
-	list_append(&modl, &m->le, m);
+	re_list_append(&modl, &m->le, m);
 
 	m->me = me;
 
@@ -218,7 +218,7 @@ int mod_debug(struct re_printf *pf, void *unused)
 
 	(void)unused;
 
-	err = re_hprintf(pf, "\n--- Modules (%u) ---\n", list_count(&modl));
+	err = re_hprintf(pf, "\n--- Modules (%u) ---\n", re_list_count(&modl));
 
 	for (le = modl.head; le && !err; le = le->next) {
 		const struct mod *m = le->data;

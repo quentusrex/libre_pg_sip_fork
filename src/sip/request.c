@@ -77,10 +77,10 @@ static void destructor(void *arg)
 		return;
 	}
 
-	list_flush(&req->cachel);
-	list_flush(&req->addrl);
-	list_flush(&req->srvl);
-	list_unlink(&req->le);
+	re_list_flush(&req->cachel);
+	re_list_flush(&req->addrl);
+	re_list_flush(&req->srvl);
+	re_list_unlink(&req->le);
 	mem_deref(req->dnsq);
 	mem_deref(req->dnsq2);
 	mem_deref(req->ct);
@@ -99,7 +99,7 @@ static void terminate(struct sip_request *req, int err,
 		req->reqp = NULL;
 	}
 
-	list_unlink(&req->le);
+	re_list_unlink(&req->le);
 	req->sendh = NULL;
 
 	if (req->resph) {
@@ -212,9 +212,9 @@ static int request_next(struct sip_request *req)
 	int err;
 
  again:
-	rr = list_ledata(req->addrl.head);
+	rr = re_list_ledata(req->addrl.head);
 	if (!rr) {
-		rr = list_ledata(req->srvl.head);
+		rr = re_list_ledata(req->srvl.head);
 		if (!rr)
 			return ENOENT;
 
@@ -224,7 +224,7 @@ static int request_next(struct sip_request *req)
 				  DNS_TYPE_A, DNS_TYPE_AAAA, DNS_CLASS_IN,
 				  true, rr_append_handler, &req->addrl);
 
-		list_unlink(&rr->le);
+		re_list_unlink(&rr->le);
 
 		if (req->addrl.head) {
 			mem_deref(rr);
@@ -251,7 +251,7 @@ static int request_next(struct sip_request *req)
 		return EINVAL;
 	}
 
-	list_unlink(&rr->le);
+	re_list_unlink(&rr->le);
 	mem_deref(rr);
 
 	err = request(req, req->tp, &dst);
@@ -310,7 +310,7 @@ static bool rr_append_handler(struct dnsrr *rr, void *arg)
 		if (rr->le.list)
 			break;
 
-		list_append(lst, &rr->le, mem_ref(rr));
+		re_list_append(lst, &rr->le, mem_ref(rr));
 		break;
 	}
 
@@ -328,8 +328,8 @@ static bool rr_cache_handler(struct dnsrr *rr, void *arg)
 		if (!sip_transp_supported(req->sip, req->tp, AF_INET))
 			break;
 
-		list_unlink(&rr->le_priv);
-		list_append(&req->cachel, &rr->le_priv, rr);
+		re_list_unlink(&rr->le_priv);
+		re_list_append(&req->cachel, &rr->le_priv, rr);
 		break;
 
 #ifdef HAVE_INET6
@@ -337,14 +337,14 @@ static bool rr_cache_handler(struct dnsrr *rr, void *arg)
 		if (!sip_transp_supported(req->sip, req->tp, AF_INET6))
 			break;
 
-		list_unlink(&rr->le_priv);
-		list_append(&req->cachel, &rr->le_priv, rr);
+		re_list_unlink(&rr->le_priv);
+		re_list_append(&req->cachel, &rr->le_priv, rr);
 		break;
 #endif
 
 	case DNS_TYPE_CNAME:
-		list_unlink(&rr->le_priv);
-		list_append(&req->cachel, &rr->le_priv, rr);
+		re_list_unlink(&rr->le_priv);
+		re_list_append(&req->cachel, &rr->le_priv, rr);
 		break;
 	}
 
@@ -621,7 +621,7 @@ int sip_request(struct sip_request **reqp, struct sip *sip, bool stateful,
 	if (!req)
 		return ENOMEM;
 
-	list_append(&sip->reql, &req->le, req);
+	re_list_append(&sip->reql, &req->le, req);
 
 	err = str_ldup(&req->met, met, metl);
 	if (err)
@@ -877,7 +877,7 @@ void sip_request_close(struct sip *sip)
 	if (!sip)
 		return;
 
-	list_apply(&sip->reql, true, close_handler, NULL);
+	re_list_apply(&sip->reql, true, close_handler, NULL);
 }
 
 

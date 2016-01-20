@@ -137,8 +137,8 @@ static void destructor(void *arg)
 
 	hash_unlink(&sess->he);
 	tmr_cancel(&sess->tmr);
-	list_flush(&sess->replyl);
-	list_flush(&sess->requestl);
+	re_list_flush(&sess->replyl);
+	re_list_flush(&sess->requestl);
 	mem_deref((void *)sess->msg);
 	mem_deref(sess->req);
 	mem_deref(sess->dlg);

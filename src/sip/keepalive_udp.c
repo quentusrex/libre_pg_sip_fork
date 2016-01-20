@@ -47,7 +47,7 @@ static void destructor(void *arg)
 {
 	struct sip_udpconn *uc = arg;
 
-	list_flush(&uc->kal);
+	re_list_flush(&uc->kal);
 	hash_unlink(&uc->he);
 	tmr_cancel(&uc->tmr_ka);
 	mem_deref(uc->ct);
@@ -136,7 +136,7 @@ static struct sip_udpconn *udpconn_find(struct sip *sip, struct udp_sock *us,
 {
 	struct le *le;
 
-	le = list_head(hash_list(sip->ht_udpconn, sa_hash(paddr, SA_ALL)));
+	le = re_list_head(hash_list(sip->ht_udpconn, sa_hash(paddr, SA_ALL)));
 
 	for (; le; le = le->next) {
 
@@ -182,7 +182,7 @@ int  sip_keepalive_udp(struct sip_keepalive *ka, struct sip *sip,
 		tmr_start(&uc->tmr_ka, 0, udpconn_keepalive_handler, uc);
 	}
 
-	list_append(&uc->kal, &ka->le, ka);
+	re_list_append(&uc->kal, &ka->le, ka);
 
 	return 0;
 }

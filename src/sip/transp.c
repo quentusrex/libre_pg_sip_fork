@@ -86,7 +86,7 @@ static void transp_destructor(void *arg)
 	if (transp->tp == SIP_TRANSP_UDP)
 		udp_handler_set(transp->sock, NULL, NULL);
 
-	list_unlink(&transp->le);
+	re_list_unlink(&transp->le);
 	mem_deref(transp->sock);
 	mem_deref(transp->tls);
 }
@@ -98,8 +98,8 @@ static void conn_destructor(void *arg)
 
 	tmr_cancel(&conn->tmr_ka);
 	tmr_cancel(&conn->tmr);
-	list_flush(&conn->kal);
-	list_flush(&conn->ql);
+	re_list_flush(&conn->kal);
+	re_list_flush(&conn->ql);
 	hash_unlink(&conn->he);
 	mem_deref(conn->sc);
 	mem_deref(conn->tc);
@@ -114,7 +114,7 @@ static void qent_destructor(void *arg)
 	if (qent->qentp)
 		*qent->qentp = NULL;
 
-	list_unlink(&qent->le);
+	re_list_unlink(&qent->le);
 	mem_deref(qent->mb);
 }
 
@@ -148,7 +148,7 @@ static struct sip_conn *conn_find(struct sip *sip, const struct sa *paddr,
 {
 	struct le *le;
 
-	le = list_head(hash_list(sip->ht_conn, sa_hash(paddr, SA_ALL)));
+	le = re_list_head(hash_list(sip->ht_conn, sa_hash(paddr, SA_ALL)));
 
 	for (; le; le = le->next) {
 
@@ -177,7 +177,7 @@ static void conn_close(struct sip_conn *conn, int err)
 	tmr_cancel(&conn->tmr);
 	hash_unlink(&conn->he);
 
-	le = list_head(&conn->ql);
+	le = re_list_head(&conn->ql);
 
 	while (le) {
 
@@ -190,7 +190,7 @@ static void conn_close(struct sip_conn *conn, int err)
 		}
 
 		qent->transph(err, qent->arg);
-		list_unlink(&qent->le);
+		re_list_unlink(&qent->le);
 		mem_deref(qent);
 	}
 
@@ -461,7 +461,7 @@ static void tcp_estab_handler(void *arg)
 
 	conn->established = true;
 
-	le = list_head(&conn->ql);
+	le = re_list_head(&conn->ql);
 
 	while (le) {
 
@@ -477,7 +477,7 @@ static void tcp_estab_handler(void *arg)
 		if (err)
 			qent->transph(err, qent->arg);
 
-		list_unlink(&qent->le);
+		re_list_unlink(&qent->le);
 		mem_deref(qent);
 	}
 }
@@ -597,7 +597,7 @@ static int conn_send(struct sip_connqent **qentp, struct sip *sip, bool secure,
 
 	}
 
-	list_append(&conn->ql, &qent->le, qent);
+	re_list_append(&conn->ql, &qent->le, qent);
 	qent->mb = mem_ref(mb);
 	qent->transph = transph ? transph : internal_transport_handler;
 	qent->arg = arg;
@@ -646,7 +646,7 @@ int sip_transp_add(struct sip *sip, enum sip_transp tp,
 	if (!transp)
 		return ENOMEM;
 
-	list_append(&sip->transpl, &transp->le, transp);
+	re_list_append(&sip->transpl, &transp->le, transp);
 	transp->sip = sip;
 	transp->tp  = tp;
 
@@ -708,7 +708,7 @@ void sip_transp_flush(struct sip *sip)
 		return;
 
 	hash_flush(sip->ht_conn);
-	list_flush(&sip->transpl);
+	re_list_flush(&sip->transpl);
 }
 
 
@@ -925,7 +925,7 @@ int sip_transp_debug(struct re_printf *pf, const struct sip *sip)
 	int err;
 
 	err = re_hprintf(pf, "transports:\n");
-	list_apply(&sip->transpl, true, debug_handler, pf);
+	re_list_apply(&sip->transpl, true, debug_handler, pf);
 
 	return err;
 }
@@ -964,7 +964,7 @@ int  sip_keepalive_tcp(struct sip_keepalive *ka, struct sip_conn *conn,
 	if (!conn->tc || !conn->established)
 		return ENOTCONN;
 
-	list_append(&conn->kal, &ka->le, ka);
+	re_list_append(&conn->kal, &ka->le, ka);
 
 	if (!tmr_isrunning(&conn->tmr_ka)) {
 

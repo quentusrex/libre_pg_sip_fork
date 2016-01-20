@@ -60,7 +60,7 @@ static void destructor(void *arg)
 {
 	struct stun_msg *msg = arg;
 
-	list_flush(&msg->attrl);
+	re_list_flush(&msg->attrl);
 	mem_deref(msg->mb);
 }
 
@@ -119,7 +119,7 @@ int stun_msg_decode(struct stun_msg **msgpp, struct mbuf *mb,
 		if (err)
 			break;
 
-		list_append(&msg->attrl, &attr->le, attr);
+		re_list_append(&msg->attrl, &attr->le, attr);
 	}
 
 	if (err)
@@ -208,7 +208,7 @@ bool stun_msg_mcookie(const struct stun_msg *msg)
  */
 struct stun_attr *stun_msg_attr(const struct stun_msg *msg, uint16_t type)
 {
-	struct le *le = msg ? list_head(&msg->attrl) : NULL;
+	struct le *le = msg ? re_list_head(&msg->attrl) : NULL;
 
 	while (le) {
 		struct stun_attr *attr = le->data;
@@ -235,7 +235,7 @@ struct stun_attr *stun_msg_attr(const struct stun_msg *msg, uint16_t type)
 struct stun_attr *stun_msg_attr_apply(const struct stun_msg *msg,
 				      stun_attr_h *h, void *arg)
 {
-	struct le *le = msg ? list_head(&msg->attrl) : NULL;
+	struct le *le = msg ? re_list_head(&msg->attrl) : NULL;
 
 	while (le) {
 		struct stun_attr *attr = le->data;

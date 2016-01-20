@@ -20,10 +20,10 @@ static void destructor(void *arg)
 	struct sdp_media *m = arg;
 	unsigned i;
 
-	list_flush(&m->lfmtl);
-	list_flush(&m->rfmtl);
-	list_flush(&m->rattrl);
-	list_flush(&m->lattrl);
+	re_list_flush(&m->lfmtl);
+	re_list_flush(&m->rfmtl);
+	re_list_flush(&m->rattrl);
+	re_list_flush(&m->lattrl);
 
 	if (m->le.list) {
 		m->disabled = true;
@@ -35,7 +35,7 @@ static void destructor(void *arg)
 	for (i=0; i<ARRAY_SIZE(m->protov); i++)
 		mem_deref(m->protov[i]);
 
-	list_unlink(&m->le);
+	re_list_unlink(&m->le);
 	mem_deref(m->name);
 	mem_deref(m->proto);
 	mem_deref(m->uproto);
@@ -51,7 +51,7 @@ static int media_alloc(struct sdp_media **mp, struct list *list)
 	if (!m)
 		return ENOMEM;
 
-	list_append(list, &m->le, m);
+	re_list_append(list, &m->le, m);
 
 	m->ldir  = SDP_SENDRECV;
 	m->rdir  = SDP_SENDRECV;
@@ -166,8 +166,8 @@ void sdp_media_rreset(struct sdp_media *m)
 	sa_init(&m->raddr, AF_INET);
 	sa_init(&m->raddr_rtcp, AF_INET);
 
-	list_flush(&m->rfmtl);
-	list_flush(&m->rattrl);
+	re_list_flush(&m->rfmtl);
+	re_list_flush(&m->rattrl);
 
 	m->rdir = SDP_SENDRECV;
 
@@ -312,8 +312,8 @@ void sdp_media_align_formats(struct sdp_media *m, bool offer)
 			lfmt->id = mem_ref(rfmt->id);
 			lfmt->pt = atoi(lfmt->id ? lfmt->id : "");
 
-			list_unlink(&lfmt->le);
-			list_append(&m->lfmtl, &lfmt->le, lfmt);
+			re_list_unlink(&lfmt->le);
+			re_list_append(&m->lfmtl, &lfmt->le, lfmt);
 		}
 	}
 
@@ -326,8 +326,8 @@ void sdp_media_align_formats(struct sdp_media *m, bool offer)
 			lle = lle->prev;
 
 			if (!lfmt->sup) {
-				list_unlink(&lfmt->le);
-				list_append(&m->lfmtl, &lfmt->le, lfmt);
+				re_list_unlink(&lfmt->le);
+				re_list_append(&m->lfmtl, &lfmt->le, lfmt);
 			}
 		}
 	}

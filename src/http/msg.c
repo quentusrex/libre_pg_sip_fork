@@ -23,7 +23,7 @@ static void hdr_destructor(void *arg)
 {
 	struct http_hdr *hdr = arg;
 
-	list_unlink(&hdr->le);
+	re_list_unlink(&hdr->le);
 }
 
 
@@ -31,7 +31,7 @@ static void destructor(void *arg)
 {
 	struct http_msg *msg = arg;
 
-	list_flush(&msg->hdrl);
+	re_list_flush(&msg->hdrl);
 	mem_deref(msg->mb);
 }
 
@@ -106,7 +106,7 @@ static inline int hdr_add(struct http_msg *msg, const struct pl *name,
 	hdr->val.l = MAX(l, 0);
 	hdr->id    = id;
 
-	list_append(&msg->hdrl, &hdr->le, hdr);
+	re_list_append(&msg->hdrl, &hdr->le, hdr);
 
 	/* parse common headers */
 	switch (id) {

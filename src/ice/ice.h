@@ -231,8 +231,8 @@ const char    *ice_checkl_state2name(enum ice_checkl_state cst);
 
 
 /* util */
-typedef void * (list_unique_h)(struct le *le1, struct le *le2);
+typedef void * (re_list_unique_h)(struct le *le1, struct le *le2);
 
 uint64_t ice_calc_pair_prio(uint32_t g, uint32_t d);
 void ice_switch_local_role(struct ice *ice);
-uint32_t ice_list_unique(struct list *list, list_unique_h *uh);
+uint32_t ice_list_unique(struct list *list, re_list_unique_h *uh);

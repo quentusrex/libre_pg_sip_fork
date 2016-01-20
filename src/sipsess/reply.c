@@ -35,7 +35,7 @@ static void destructor(void *arg)
 {
 	struct sipsess_reply *reply = arg;
 
-	list_unlink(&reply->le);
+	re_list_unlink(&reply->le);
 	tmr_cancel(&reply->tmr);
 	tmr_cancel(&reply->tmrg);
 	mem_deref((void *)reply->msg);
@@ -89,7 +89,7 @@ int sipsess_reply_2xx(struct sipsess *sess, const struct sip_msg *msg,
 	if (!reply)
 		goto out;
 
-	list_append(&sess->replyl, &reply->le, reply);
+	re_list_append(&sess->replyl, &reply->le, reply);
 	reply->seq  = msg->cseq.num;
 	reply->msg  = mem_ref((void *)msg);
 	reply->sess = sess;
@@ -148,7 +148,7 @@ int sipsess_reply_ack(struct sipsess *sess, const struct sip_msg *msg,
 {
 	struct sipsess_reply *reply;
 
-	reply = list_ledata(list_apply(&sess->replyl, false, cmp_handler,
+	reply = re_list_ledata(re_list_apply(&sess->replyl, false, cmp_handler,
 				       (void *)msg));
 	if (!reply)
 		return ENOENT;

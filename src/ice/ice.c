@@ -49,7 +49,7 @@ static void ice_destructor(void *arg)
 {
 	struct ice *ice = arg;
 
-	list_flush(&ice->ml);
+	re_list_flush(&ice->ml);
 	mem_deref(ice->stun);
 }
 
@@ -75,7 +75,7 @@ int ice_alloc(struct ice **icep, enum ice_mode mode, bool offerer)
 	if (!ice)
 		return ENOMEM;
 
-	list_init(&ice->ml);
+	re_list_init(&ice->ml);
 
 	ice->conf = conf_default;
 	ice->lmode = mode;

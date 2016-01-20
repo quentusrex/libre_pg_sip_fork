@@ -91,7 +91,7 @@ void tmr_poll(struct list *tmrl)
 		tmr_h *th;
 		void *th_arg;
 
-		tmr = list_ledata(tmrl->head);
+		tmr = re_list_ledata(tmrl->head);
 
 		if (!tmr || (tmr->jfs > jfs)) {
 			break;
@@ -102,7 +102,7 @@ void tmr_poll(struct list *tmrl)
 
 		tmr->th = NULL;
 
-		list_unlink(&tmr->le);
+		re_list_unlink(&tmr->le);
 
 		if (!th)
 			continue;
@@ -160,7 +160,7 @@ uint64_t tmr_next_timeout(struct list *tmrl)
 	const uint64_t jif = tmr_jiffies();
 	const struct tmr *tmr;
 
-	tmr = list_ledata(tmrl->head);
+	tmr = re_list_ledata(tmrl->head);
 	if (!tmr)
 		return 0;
 
@@ -180,7 +180,7 @@ int tmr_status(struct re_printf *pf, void *unused)
 
 	(void)unused;
 
-	n = list_count(tmrl);
+	n = re_list_count(tmrl);
 	if (!n)
 		return 0;
 
@@ -206,7 +206,7 @@ int tmr_status(struct re_printf *pf, void *unused)
  */
 void tmr_debug(void)
 {
-	if (!list_isempty(tmrl_get()))
+	if (!re_list_isempty(tmrl_get()))
 		(void)re_fprintf(stderr, "%H", tmr_status, NULL);
 }
 
@@ -242,7 +242,7 @@ void tmr_start(struct tmr *tmr, uint64_t delay, tmr_h *th, void *arg)
 		return;
 
 	if (tmr->th) {
-		list_unlink(&tmr->le);
+		re_list_unlink(&tmr->le);
 	}
 
 	tmr->th  = th;
@@ -254,21 +254,21 @@ void tmr_start(struct tmr *tmr, uint64_t delay, tmr_h *th, void *arg)
 	tmr->jfs = delay + tmr_jiffies();
 
 	if (delay == 0) {
-		le = list_apply(tmrl, true, inspos_handler_0, &tmr->jfs);
+		le = re_list_apply(tmrl, true, inspos_handler_0, &tmr->jfs);
 		if (le) {
-			list_insert_before(tmrl, le, &tmr->le, tmr);
+			re_list_insert_before(tmrl, le, &tmr->le, tmr);
 		}
 		else {
-			list_append(tmrl, &tmr->le, tmr);
+			re_list_append(tmrl, &tmr->le, tmr);
 		}
 	}
 	else {
-		le = list_apply(tmrl, false, inspos_handler, &tmr->jfs);
+		le = re_list_apply(tmrl, false, inspos_handler, &tmr->jfs);
 		if (le) {
-			list_insert_after(tmrl, le, &tmr->le, tmr);
+			re_list_insert_after(tmrl, le, &tmr->le, tmr);
 		}
 		else {
-			list_prepend(tmrl, &tmr->le, tmr);
+			re_list_prepend(tmrl, &tmr->le, tmr);
 		}
 	}
 

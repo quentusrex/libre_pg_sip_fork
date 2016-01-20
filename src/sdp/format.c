@@ -19,7 +19,7 @@ static void destructor(void *arg)
 {
 	struct sdp_format *fmt = arg;
 
-	list_unlink(&fmt->le);
+	re_list_unlink(&fmt->le);
 
 	if (fmt->ref)
 		mem_deref(fmt->data);
@@ -69,9 +69,9 @@ int sdp_format_add(struct sdp_format **fmtp, struct sdp_media *m,
 		return ENOMEM;
 
 	if (prepend)
-		list_prepend(&m->lfmtl, &fmt->le, fmt);
+		re_list_prepend(&m->lfmtl, &fmt->le, fmt);
 	else
-		list_append(&m->lfmtl, &fmt->le, fmt);
+		re_list_append(&m->lfmtl, &fmt->le, fmt);
 
 	if (id)
 		err = str_dup(&fmt->id, id);
@@ -128,7 +128,7 @@ int sdp_format_radd(struct sdp_media *m, const struct pl *id)
 	if (!fmt)
 		return ENOMEM;
 
-	list_append(&m->rfmtl, &fmt->le, fmt);
+	re_list_append(&m->rfmtl, &fmt->le, fmt);
 
 	err = pl_strdup(&fmt->id, id);
 	if (err)

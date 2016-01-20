@@ -624,7 +624,7 @@ static bool cmp_handler(struct le *le, void *arg)
 static struct tls_conn *conn_lookup(struct dtls_sock *sock,
 				    const struct sa *peer)
 {
-	return list_ledata(hash_lookup(sock->ht, sa_hash(peer, SA_ALL),
+	return re_list_ledata(hash_lookup(sock->ht, sa_hash(peer, SA_ALL),
                                        cmp_handler, (void *)peer));
 }
 

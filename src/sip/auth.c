@@ -57,7 +57,7 @@ static void realm_destructor(void *arg)
 {
 	struct realm *realm = arg;
 
-	list_unlink(&realm->le);
+	re_list_unlink(&realm->le);
 	mem_deref(realm->realm);
 	mem_deref(realm->nonce);
 	mem_deref(realm->qop);
@@ -74,7 +74,7 @@ static void auth_destructor(void *arg)
 	if (auth->ref)
 		mem_deref(auth->arg);
 
-	list_flush(&auth->realml);
+	re_list_flush(&auth->realml);
 }
 
 
@@ -140,7 +140,7 @@ static bool auth_handler(const struct sip_hdr *hdr, const struct sip_msg *msg,
 		goto out;
 	}
 
-	realm = list_ledata(list_apply(&auth->realml, true, cmp_handler,
+	realm = re_list_ledata(re_list_apply(&auth->realml, true, cmp_handler,
 				       &ch.realm));
 	if (!realm) {
 		realm = mem_zalloc(sizeof(*realm), realm_destructor);
@@ -149,7 +149,7 @@ static bool auth_handler(const struct sip_hdr *hdr, const struct sip_msg *msg,
 			goto out;
 		}
 
-		list_append(&auth->realml, &realm->le, realm);
+		re_list_append(&auth->realml, &realm->le, realm);
 
 		err = pl_strdup(&realm->realm, &ch.realm);
 		if (err)
@@ -321,5 +321,5 @@ void sip_auth_reset(struct sip_auth *auth)
 	if (!auth)
 		return;
 
-	list_flush(&auth->realml);
+	re_list_flush(&auth->realml);
 }

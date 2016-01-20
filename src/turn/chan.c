@@ -247,7 +247,7 @@ struct chan *turnc_chan_find_numb(const struct turnc *turnc, uint16_t nr)
 	if (!turnc)
 		return NULL;
 
-	return list_ledata(hash_lookup(turnc->chans->ht_numb, nr,
+	return re_list_ledata(hash_lookup(turnc->chans->ht_numb, nr,
 				       numb_hash_cmp_handler, &nr));
 }
 
@@ -258,7 +258,7 @@ struct chan *turnc_chan_find_peer(const struct turnc *turnc,
 	if (!turnc)
 		return NULL;
 
-	return list_ledata(hash_lookup(turnc->chans->ht_peer,
+	return re_list_ledata(hash_lookup(turnc->chans->ht_peer,
 				       sa_hash(peer, SA_ALL),
 				       peer_hash_cmp_handler, (void *)peer));
 }

@@ -75,7 +75,7 @@ static void destructor(void *arg)
 	mem_deref(srtp->rtp.hmac);
 	mem_deref(srtp->rtcp.hmac);
 
-	list_flush(&srtp->streaml);
+	re_list_flush(&srtp->streaml);
 }
 
 

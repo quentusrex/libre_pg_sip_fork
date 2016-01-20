@@ -46,7 +46,7 @@ static void destructor(void *arg)
 		break;
 	}
 
-	list_unlink(&attr->le);
+	re_list_unlink(&attr->le);
 }
 
 

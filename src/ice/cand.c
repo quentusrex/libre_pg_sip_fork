@@ -27,7 +27,7 @@ static void cand_destructor(void *arg)
 {
 	struct ice_cand *cand = arg;
 
-	list_unlink(&cand->le);
+	re_list_unlink(&cand->le);
 	mem_deref(cand->foundation);
 	mem_deref(cand->ifname);
 
@@ -63,7 +63,7 @@ static int cand_alloc(struct ice_cand **candp, struct icem *icem,
 	if (!cand)
 		return ENOMEM;
 
-	list_append(&icem->lcandl, &cand->le, cand);
+	re_list_append(&icem->lcandl, &cand->le, cand);
 
 	cand->type   = type;
 	cand->compid = compid;
@@ -150,7 +150,7 @@ int icem_rcand_add(struct icem *icem, enum ice_cand_type type, unsigned compid,
 	if (!rcand)
 		return ENOMEM;
 
-	list_append(&icem->rcandl, &rcand->le, rcand);
+	re_list_append(&icem->rcandl, &rcand->le, rcand);
 
 	rcand->type   = type;
 	rcand->compid = compid;
@@ -182,7 +182,7 @@ int icem_rcand_add_prflx(struct ice_cand **rcp, struct icem *icem,
 	if (!rcand)
 		return ENOMEM;
 
-	list_append(&icem->rcandl, &rcand->le, rcand);
+	re_list_append(&icem->rcandl, &rcand->le, rcand);
 
 	rcand->type   = ICE_CAND_TYPE_PRFLX;
 	rcand->compid = compid;
@@ -212,7 +212,7 @@ struct ice_cand *icem_cand_find(const struct list *lst, unsigned compid,
 {
 	struct le *le;
 
-	for (le = list_head(lst); le; le = le->next) {
+	for (le = re_list_head(lst); le; le = le->next) {
 
 		struct ice_cand *cand = le->data;
 
@@ -263,9 +263,9 @@ int icem_cands_debug(struct re_printf *pf, const struct list *lst)
 	struct le *le;
 	int err;
 
-	err = re_hprintf(pf, " (%u)\n", list_count(lst));
+	err = re_hprintf(pf, " (%u)\n", re_list_count(lst));
 
-	for (le = list_head(lst); le && !err; le = le->next) {
+	for (le = re_list_head(lst); le && !err; le = le->next) {
 
 		const struct ice_cand *cand = le->data;
 

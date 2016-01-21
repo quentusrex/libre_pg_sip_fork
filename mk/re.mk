@@ -149,7 +149,7 @@ endif
 
 
 # Compiler warning flags
-CFLAGS	+= -Wall
+CFLAGS	+= -Wall -Werror
 CFLAGS	+= -Wmissing-declarations
 CFLAGS	+= -Wmissing-prototypes
 CFLAGS	+= -Wstrict-prototypes
